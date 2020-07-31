@@ -1,0 +1,20 @@
+<div class="list-header">
+    <div class="title">Задачи</div>
+    <div class="settings"><img src="../../assets/images/settings.svg" alt="settings"></div>
+</div>
+<div class="task-list-wrapper">
+
+    <div *ngFor="let task of list" class="task-list-item">
+        <div class="title">{{ task.title }}</div>
+        <div class="controls">
+            <button type="button" class="edit" title="Редактировать">
+                <img src="../../assets/images/edit.svg" alt="edit">
+            </button>
+            <button class="delete" title="Удалить">
+                <img src="../../assets/images/delete.svg" alt="delete">
+            </button>
+        </div>
+    </div>
+  
+
+</div>

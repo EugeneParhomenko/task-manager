@@ -1,0 +1,12 @@
+<div class="group-header">
+    <div class="title">Список</div>
+</div>
+<div class="group-list">
+    <div 
+        *ngFor="let group of groups; let i = index" 
+        class="group-list-item"
+        [ngClass]="{'active': i == 0}"
+    >
+        {{ group.title }}
+    </div>
+</div>
