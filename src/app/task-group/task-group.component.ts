@@ -24,19 +24,15 @@ export class TaskGroupComponent implements OnInit, OnDestroy {
       this.s1 = this.taskService.getGroups()
         .subscribe(groups => {
           this.active = 1;
-          this.groups = groups
+          this.groups = groups;
         });
-  }
-
-  public changeActive(): void {
-    //
   }
 
   ngOnInit(): void {
     this.renderGroups();
   }
 
-  change(listId: number) {
+  change(listId: number): void {
     this.active = listId;
     this.onChanged.emit(listId);
   }

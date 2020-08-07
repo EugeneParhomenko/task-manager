@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, OnChanges, SimpleChanges, EventEmitter, Output } from '@angular/core';
 import { TaskService } from '../common/service/task.service';
 import { Task } from '../common/model/task.model';
 import { Subscription } from 'rxjs';
@@ -14,6 +14,7 @@ export class TaskListComponent implements OnInit, OnDestroy, OnChanges {
   s1: Subscription;
 
   @Input() groupId: number;
+  @Output() callEditTask = new EventEmitter<number>();
 
   constructor(
     private taskService: TaskService
@@ -46,6 +47,10 @@ export class TaskListComponent implements OnInit, OnDestroy, OnChanges {
       .subscribe(() => {
         this.renderTasks(this.groupId ? this.groupId : 1);
       });
+  }
+
+  public editTask(id: number): void {
+    this.callEditTask.emit(id);
   }
 
 }

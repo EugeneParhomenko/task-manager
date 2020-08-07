@@ -12,6 +12,7 @@ export class AppComponent {
   @ViewChild(TaskListComponent) taskListComponent: TaskListComponent;
 
   groupId: number;
+  openTaskId: number;
   isTaskEdit: boolean = false;
   isGroupEdit: boolean = false;
 
@@ -22,6 +23,14 @@ export class AppComponent {
 
   public renderTasks(): void {
     this.taskListComponent.renderTasks(this.taskListComponent.groupId ? this.taskListComponent.groupId : 1);
+  }
+
+  public callEditTask(id: number): void {
+    this.isTaskEdit = true;
+    this.isShowPopup = true;
+    this.isShowTask = true;
+    this.openTaskId = id;
+    console.log('Task ID = ' + this.openTaskId);
   }
 
   public addTask(): void {

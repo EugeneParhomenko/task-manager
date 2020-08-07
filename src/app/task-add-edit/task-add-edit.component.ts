@@ -9,16 +9,19 @@ import { TaskService } from '../common/service/task.service';
   templateUrl: './task-add-edit.component.html',
   styleUrls: ['./task-add-edit.component.scss']
 })
-export class TaskAddEditComponent implements OnInit, OnChanges, OnDestroy {
+export class TaskAddEditComponent implements OnInit, OnDestroy {
 
   buttonText = 'Добавить';
   formTitle = 'Добавить задачу';
   form: FormGroup;
+  task: Task;
   @Input() isTaskEdit: boolean;
   @Input() groupId: number;
+  @Input() openTaskId: number;
   @Output() renderTasks = new EventEmitter<any>();
   @Output() closePopup = new EventEmitter<any>();
   s1: Subscription;
+  s2: Subscription;
 
   constructor(
     private taskService: TaskService
@@ -27,10 +30,11 @@ export class TaskAddEditComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit(): void {
     this.changeText();
 
+    console.log('In EDIT COMPONENT - ' + this.openTaskId);
+    console.log('is EDIT? - ' + this.isTaskEdit);
+
     if(this.isTaskEdit) {
-      this.form = new FormGroup({
-        title: new FormControl('', [Validators.required, Validators.minLength(2)]),
-      });
+      this.setEditTask(this.openTaskId);
     } else {
       this.form = new FormGroup({
         title: new FormControl('', [Validators.required, Validators.minLength(2)]),
@@ -39,29 +43,59 @@ export class TaskAddEditComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   submit(): void {
-    const title = this.form.value.title;
-    const parent = this.groupId ? this.groupId : 1;
-    const done = false;
-    const task: Task = {title, parent, done};
+    if (this.isTaskEdit) {
+      const title = this.form.value.title;
+      const parent = this.task.parent;
+      const done = this.task.done;
+      const task: Task = {title, parent, done};
 
-    this.s1 = this.taskService.addTask(task)
-      .subscribe(() => {
-        this.renderTasks.emit();
-        this.closePopup.emit();
-      });
+      this.s1 = this.taskService.updateTask(this.task.id, task)
+        .subscribe(() => {
+          this.renderTasks.emit();
+          this.closePopup.emit();
+        });
+    } else {
+      const title = this.form.value.title;
+      const parent = this.groupId ? this.groupId : 1;
+      const done = false;
+      const task: Task = {title, parent, done};
+
+      this.s1 = this.taskService.addTask(task)
+        .subscribe(() => {
+          this.renderTasks.emit();
+          this.closePopup.emit();
+        });
+    }
   }
 
-  ngOnChanges(): void {
-    this.changeText();
-  }
+  // ngOnChanges(): void {
+  //   this.changeText();
+  // }
 
   ngOnDestroy(): void {
     if(this.s1) {
       this.s1.unsubscribe();
     }
+    if(this.s2) {
+      this.s2.unsubscribe();
+    }
   }
 
-  changeText(): void {
+  private setEditTask(id: number): void {
+    console.log('call getTask');
+    this.s2 = this.taskService.getTask(id)
+      .subscribe((task) => {
+        this.task = task;
+
+        console.log('Next gonna task object:');
+        console.log(this.task);
+        this.form = new FormGroup({
+          title: new FormControl(this.task.title, [Validators.required, Validators.minLength(2)]),
+        });
+      });
+  }
+
+  private changeText(): void {
     if (this.isTaskEdit) {
       this.buttonText = 'Редактировать';
       this.formTitle = 'Редактировать задачу';

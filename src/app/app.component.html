@@ -13,6 +13,7 @@
 
     <edm-task-list 
       [groupId]="groupId" 
+      (callEditTask)="callEditTask($event)"
       (renderTasks)="renderTasks()"
     ></edm-task-list>
 
@@ -30,7 +31,9 @@
     (renderTasks)="renderTasks()"
     (closePopup)="closePopup()"
     [groupId]="groupId"
+    [openTaskId]="openTaskId"
   ></edm-task-add-edit>
+
   <edm-group-add-edit 
     *ngIf="isShowGroup"
     [isGroupEdit]="isGroupEdit"

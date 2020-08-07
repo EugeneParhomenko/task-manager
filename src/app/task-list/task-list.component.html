@@ -7,7 +7,7 @@
     <div *ngFor="let task of list" class="task-list-item">
         <div class="title">{{ task.title }}</div>
         <div class="controls">
-            <button type="button" class="edit" title="Редактировать">
+            <button type="button" class="edit" title="Редактировать" (click)="editTask(task.id)">
                 <img src="../../assets/images/edit.svg" alt="edit">
             </button>
             <button class="delete" title="Удалить" (click)="deleteTask(task.id)">
