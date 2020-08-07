@@ -4,8 +4,8 @@
 </div>
 <div class="task-list-wrapper">
 
-    <div *ngFor="let task of list" class="task-list-item">
-        <div class="title">{{ task.title }}</div>
+    <div *ngFor="let task of list" class="task-list-item" [ngClass]="{'done': task.done}">
+        <div class="title" (click)="toggleTask(task.id)">{{ task.title }}</div>
         <div class="controls">
             <button type="button" class="edit" title="Редактировать" (click)="editTask(task.id)">
                 <img src="../../assets/images/edit.svg" alt="edit">

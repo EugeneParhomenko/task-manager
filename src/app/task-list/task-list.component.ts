@@ -12,6 +12,8 @@ export class TaskListComponent implements OnInit, OnDestroy, OnChanges {
 
   list: Task[] = [];
   s1: Subscription;
+  s2: Subscription;
+  s3: Subscription;
 
   @Input() groupId: number;
   @Output() callEditTask = new EventEmitter<number>();
@@ -25,7 +27,7 @@ export class TaskListComponent implements OnInit, OnDestroy, OnChanges {
   }
 
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if(changes && changes['groupId']) {
       this.renderTasks(this.groupId);
     }
@@ -35,7 +37,16 @@ export class TaskListComponent implements OnInit, OnDestroy, OnChanges {
     if(this.s1) {
       this.s1.unsubscribe();
     }
+    if(this.s2) {
+      this.s2.unsubscribe();
+    }
+    if(this.s3) {
+      this.s2.unsubscribe();
+    }
   }
+
+
+
 
   public renderTasks(parent: number): void {
     this.s1 = this.taskService.getGroupList(parent)
@@ -46,6 +57,18 @@ export class TaskListComponent implements OnInit, OnDestroy, OnChanges {
     this.taskService.deleteTask(id)
       .subscribe(() => {
         this.renderTasks(this.groupId ? this.groupId : 1);
+      });
+  }
+
+  public toggleTask(id: number): void{
+    this.s2 = this.taskService.getTask(id)
+      .subscribe((task) => {
+        task.done = !task.done;
+
+        this.s3 = this.taskService.updateTask(id, task)
+          .subscribe(() => {
+            this.renderTasks(this.groupId ? this.groupId : 1);
+          });
       });
   }
 

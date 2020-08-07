@@ -140,12 +140,16 @@ html {
                 background: #ffffff;
                 box-shadow: 0 0 28px -10px #0000002e;
                 border-radius: 6px;
-                font-size: 16px;
-                line-height: 22px;
-                font-weight: 400;
-                color: #000000;
                 margin: 0 0 20px;
-                cursor: pointer;
+                cursor: default;
+
+                .title {
+                    font-size: 16px;
+                    line-height: 22px;
+                    font-weight: 400;
+                    color: #000000;
+                    cursor: pointer;
+                }
 
                 .controls {
                     display: flex;
@@ -176,6 +180,15 @@ html {
                             height: 20px;
                         }
                     }
+                }
+            }
+
+            .task-list-item.done {
+                opacity: 0.6;
+
+                .title {
+                    text-decoration: line-through;
+                    color: #666;
                 }
             }
 
