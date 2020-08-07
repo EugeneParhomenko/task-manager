@@ -1,12 +1,40 @@
 <div class="app-wrapper">
+
   <div class="task-groups">
-    <edm-task-group></edm-task-group>
+
+    <edm-task-group 
+      (onChanged)="onChanged($event)"
+    ></edm-task-group>
+
+    <button type="button" class="addGroup" (click)="addGroup()">Добавить группу</button>
   </div>
+
   <div class="task-list">
-    <edm-task-list></edm-task-list>
+
+    <edm-task-list 
+      [groupId]="groupId" 
+      (renderTasks)="renderTasks()"
+    ></edm-task-list>
+
+    <button type="button" class="addTask" (click)="addTask()">+</button>
   </div>
+
 </div>
-<div class="overlay"></div>
-<div class="popup">
-  <edm-task-add-edit></edm-task-add-edit>
+
+<div class="overlay" [ngClass]="{'active': isShowPopup}" (click)="closePopup()"></div>
+<div class="popup" [ngClass]="{'active': isShowPopup}">
+
+  <edm-task-add-edit 
+    *ngIf="isShowTask"
+    [isTaskEdit]="isTaskEdit"
+    (renderTasks)="renderTasks()"
+    (closePopup)="closePopup()"
+    [groupId]="groupId"
+  ></edm-task-add-edit>
+  <edm-group-add-edit 
+    *ngIf="isShowGroup"
+    [isGroupEdit]="isGroupEdit"
+  ></edm-group-add-edit>
+
+  <div class="close" (click)="closePopup()"></div>
 </div>

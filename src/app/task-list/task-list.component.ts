@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { TaskService } from '../common/service/task.service';
 import { Task } from '../common/model/task.model';
 import { Subscription } from 'rxjs';
@@ -8,28 +8,44 @@ import { Subscription } from 'rxjs';
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.scss']
 })
-export class TaskListComponent implements OnInit, OnDestroy {
+export class TaskListComponent implements OnInit, OnDestroy, OnChanges {
 
   list: Task[] = [];
   s1: Subscription;
+
+  @Input() groupId: number;
 
   constructor(
     private taskService: TaskService
   ) { }
 
-  public renderTasks(parent: number): void {
-    this.s1 = this.taskService.getGroupList(parent)
-      .subscribe(list => this.list = list);
-  }
-
   ngOnInit(): void {
     this.renderTasks(1);
+  }
+
+
+  ngOnChanges(changes: SimpleChanges) {
+    if(changes && changes['groupId']) {
+      this.renderTasks(this.groupId);
+    }
   }
 
   ngOnDestroy(): void {
     if(this.s1) {
       this.s1.unsubscribe();
     }
+  }
+
+  public renderTasks(parent: number): void {
+    this.s1 = this.taskService.getGroupList(parent)
+      .subscribe(list => this.list = list);
+  }
+
+  public deleteTask(id: number): void {
+    this.taskService.deleteTask(id)
+      .subscribe(() => {
+        this.renderTasks(this.groupId ? this.groupId : 1);
+      });
   }
 
 }

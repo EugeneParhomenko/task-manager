@@ -1,0 +1,11 @@
+<div class="from-wrapper">
+  <div class="form-title">{{ formTitle }}</div>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-row">
+          <div class="form-item">
+              <input type="text" formControlName="title" class="form-input">
+          </div>
+          <button type="submit" class="form-submit">{{ buttonText }}</button>
+      </div>
+  </form>
+</div>

@@ -23,4 +23,12 @@ export class TaskService {
         );
     }
 
+    deleteTask(taskId: number): Observable<any> {
+        return this.http.delete(this.serverUrl + `tasks/${taskId}`);
+    }
+
+    addTask(task: Task): Observable<any> {
+        return this.http.post(this.serverUrl + `tasks`, task)
+    }
+
 }

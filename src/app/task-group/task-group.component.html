@@ -5,7 +5,8 @@
     <div 
         *ngFor="let group of groups; let i = index" 
         class="group-list-item"
-        [ngClass]="{'active': i == 0}"
+        [ngClass]="{'active': i == active-1}"
+        (click)="change(group.id)"
     >
         {{ group.title }}
     </div>
