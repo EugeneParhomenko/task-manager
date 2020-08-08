@@ -109,6 +109,18 @@ html {
         background: #f8f8f8;
         position: relative;
 
+        .task-list-empty {
+            position: relative;
+            padding: 160px 30px;
+
+            .empty-text {
+                text-align: center;
+                font-size: 22px;
+                font-weight: 500;
+                color: #444;
+            }
+        }
+
         .list-header {
             display: flex;
             align-items: center;
@@ -122,9 +134,50 @@ html {
             }
 
             .settings {
-                width: 24px;
-                height: 24px;
+                width: 32px;
+                height: 32px;
+                padding: 4px;
                 cursor: pointer;
+                position: relative;
+                text-align: center;
+
+                img {
+                    max-width: 24px;
+                }
+
+                .dropdown {
+                    position: absolute;
+                    top: 100%;
+                    width: 38px;
+                    left: -3px;
+                    display: flex;
+                    flex-direction: column;
+                    background: #fff;
+                    border-radius: 4px;
+                    padding: 4px;
+                    box-shadow: 0 0 20px -10px rgb(0 0 0 / 0.6);
+                    z-index: 2;
+                    opacity: 0;
+                    visibility: hidden;
+                    transition: opacity 0.3s ease;
+
+                    button {
+                        background: transparent;
+                        border: 0;
+                        padding: 6px;
+                        box-shadow: none !important;
+                        outline: none !important;
+                        cursor: pointer;
+                    }
+                }
+            }
+
+            .settings:hover {
+
+                .dropdown {
+                    opacity: 1;
+                    visibility: visible;
+                }
             }
         }
 
@@ -299,6 +352,11 @@ html {
                 cursor: pointer;
                 outline: none !important;
                 box-shadow: none !important;
+            }
+
+            button.form-submit[disabled] {
+                cursor: default;
+                opacity: 0.8;
             }
         }
     }

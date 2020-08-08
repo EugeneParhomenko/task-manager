@@ -30,14 +30,11 @@ export class TaskAddEditComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.changeText();
 
-    console.log('In EDIT COMPONENT - ' + this.openTaskId);
-    console.log('is EDIT? - ' + this.isTaskEdit);
-
     if(this.isTaskEdit) {
       this.setEditTask(this.openTaskId);
     } else {
       this.form = new FormGroup({
-        title: new FormControl('', [Validators.required, Validators.minLength(2)]),
+        title: new FormControl('', [Validators.required, Validators.minLength(4)]),
       });
     }
   }
@@ -68,10 +65,6 @@ export class TaskAddEditComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ngOnChanges(): void {
-  //   this.changeText();
-  // }
-
   ngOnDestroy(): void {
     if(this.s1) {
       this.s1.unsubscribe();
@@ -82,15 +75,12 @@ export class TaskAddEditComponent implements OnInit, OnDestroy {
   }
 
   private setEditTask(id: number): void {
-    console.log('call getTask');
     this.s2 = this.taskService.getTask(id)
       .subscribe((task) => {
         this.task = task;
 
-        console.log('Next gonna task object:');
-        console.log(this.task);
         this.form = new FormGroup({
-          title: new FormControl(this.task.title, [Validators.required, Validators.minLength(2)]),
+          title: new FormControl(this.task.title, [Validators.required, Validators.minLength(4)]),
         });
       });
   }

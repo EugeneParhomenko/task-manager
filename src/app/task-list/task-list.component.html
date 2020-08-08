@@ -1,8 +1,14 @@
 <div class="list-header">
     <div class="title">Задачи</div>
-    <div class="settings"><img src="../../assets/images/settings.svg" alt="settings"></div>
+    <div class="settings">
+        <img src="../../assets/images/settings.svg" alt="settings">
+        <div class="dropdown">
+            <button type="button" class="edit" (click)="editGroup()"><img src="../../assets/images/edit.svg" alt="edit"></button>
+            <button type="button" class="delete" (click)="deleteGroup()"><img src="../../assets/images/delete.svg" alt="delete"></button>
+        </div>
+    </div>
 </div>
-<div class="task-list-wrapper">
+<div class="task-list-wrapper"  *ngIf="!empty">
 
     <div *ngFor="let task of list" class="task-list-item" [ngClass]="{'done': task.done}">
         <div class="title" (click)="toggleTask(task.id)">{{ task.title }}</div>
@@ -15,6 +21,9 @@
             </button>
         </div>
     </div>
-  
 
+</div>
+
+<div class="task-list-empty" *ngIf="empty">
+    <div class="empty-text">Похоже ваш список задач - пуст... <br />Добавьте несколько задач с помощью кнопки внизу.</div>
 </div>

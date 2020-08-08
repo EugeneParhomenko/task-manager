@@ -5,7 +5,7 @@
             <div class="form-item">
                 <input type="text" formControlName="title" class="form-input">
             </div>
-            <button type="submit" class="form-submit">{{ buttonText }}</button>
+            <button type="submit" class="form-submit" [disabled]="!form.valid">{{ buttonText }}</button>
         </div>
     </form>
 </div>

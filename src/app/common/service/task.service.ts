@@ -3,39 +3,87 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { Task } from '../model/task.model';
+import { Group } from '../model/group.model';
 
 @Injectable()
 export class TaskService {
 
     private serverUrl = 'http://localhost:3200/';
 
-    constructor(public http: HttpClient) {}
+    constructor(private http: HttpClient) {}
 
-    getGroups(): Observable<any> {
+    public getGroups(): Observable<any> {
         return this.http.get(this.serverUrl + 'groups');
     }
 
-    getGroupList(groupID: number): Observable<any> {
+    public getGroup(groupId: number): Observable<any> {
+        return this.http.get(this.serverUrl + `groups/${groupId}`);
+    }
+
+    public addGroup(group: Group): Observable<any> {
+        return this.http.post(this.serverUrl + `groups`, group)
+    }
+
+    public updateGroup(groupId: number, group: Group): Observable<any> {
+        return this.http.put(this.serverUrl + `groups/${groupId}`, group);
+    }
+
+    // public deleteGroup(groupId: number): void {
+    //     this.http.get(this.serverUrl + 'tasks')
+    //         .pipe(
+    //             map((item: Task[]) => item.filter((item: Task) => {
+    //                 if (item) {
+    //                     if (item.parent === groupId) {
+    //                         this.deleteTask(item.id);
+    //                     }
+    //                 }
+    //                 this.http.delete(this.serverUrl + `groups/${groupId}`);
+    //             }))
+    //         );
+    //     // return this.http.delete(this.serverUrl + `groups/${groupId}`);
+    // }
+
+    public deleteGroup(groupId: number): Observable<any> {
+        console.log('starting delete');
+        this.deleteGroupList(groupId);
+        return this.http.delete(this.serverUrl + `groups/${groupId}`);
+    }
+
+    public deleteGroupList(groupId: number): Observable<any> {
+        console.log('starting delete lists');
+        return this.http.get(this.serverUrl + 'tasks')
+            .pipe(
+                map((item: Task[]) => item.filter(item => {
+                    console.log(item);
+                    if (item) {
+                        if (item.parent === groupId) {
+                            return this.http.delete(this.serverUrl + `tasks/${item.id}`);
+                        }
+                    }
+                }))
+            );
+    }
+
+    public getGroupList(groupId: number): Observable<any> {
         return this.http.get(this.serverUrl + 'tasks')
         .pipe(
-            map((item: Task[]) => item.filter(item => item.parent === groupID)),
-            filter((item: Task[]) => item && item.length > 0)
+            map((item: Task[]) => item.filter(item => item.parent === groupId))
         );
     }
 
-    deleteTask(taskId: number): Observable<any> {
+    public deleteTask(taskId: number): Observable<any> {
         return this.http.delete(this.serverUrl + `tasks/${taskId}`);
     }
 
-    addTask(task: Task): Observable<any> {
+    public addTask(task: Task): Observable<any> {
         return this.http.post(this.serverUrl + `tasks`, task)
     }
 
-    getTask(taskId: number): Observable<any> {
+    public getTask(taskId: number): Observable<any> {
         return this.http.get(this.serverUrl + `tasks/${taskId}`);
     }
 
-    updateTask(taskId: number, task: Task): Observable<any> {
+    public updateTask(taskId: number, task: Task): Observable<any> {
         return this.http.put(this.serverUrl + `tasks/${taskId}`, task);
     }
 

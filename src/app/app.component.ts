@@ -1,17 +1,20 @@
-import { Component, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
 import { TaskListComponent } from './task-list/task-list.component';
+import { TaskGroupComponent } from './task-group/task-group.component';
 
 @Component({
   selector: 'edm-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+  
   title = 'task-manager';
 
   @ViewChild(TaskListComponent) taskListComponent: TaskListComponent;
+  @ViewChild(TaskGroupComponent) taskGroupComponent: TaskGroupComponent;
 
-  groupId: number;
+  groupId: number = 1;
   openTaskId: number;
   isTaskEdit: boolean = false;
   isGroupEdit: boolean = false;
@@ -21,8 +24,16 @@ export class AppComponent {
 
   isShowPopup: boolean = false;
 
+  ngOnInit(): void {
+    console.log(this.groupId);
+  }
+
   public renderTasks(): void {
     this.taskListComponent.renderTasks(this.taskListComponent.groupId ? this.taskListComponent.groupId : 1);
+  }
+
+  public renderGroups(groupId?: number): void {
+    this.taskGroupComponent.renderGroups(groupId);
   }
 
   public callEditTask(id: number): void {
@@ -43,6 +54,13 @@ export class AppComponent {
     this.isShowGroup = true;
   }
 
+  public callEditGroup(groupId: number): void {
+    this.isGroupEdit = true;
+    this.isShowPopup = true;
+    this.isShowGroup = true;
+    this.groupId = groupId;
+  }
+
   public closePopup(): void {
     this.isShowPopup = false;
     this.isShowTask = false;
@@ -52,4 +70,5 @@ export class AppComponent {
   onChanged(event: number): void {
     this.groupId = event;
   }
+
 }

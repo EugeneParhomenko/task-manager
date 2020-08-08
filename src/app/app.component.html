@@ -3,6 +3,7 @@
   <div class="task-groups">
 
     <edm-task-group 
+      [groupId]="groupId" 
       (onChanged)="onChanged($event)"
     ></edm-task-group>
 
@@ -15,6 +16,8 @@
       [groupId]="groupId" 
       (callEditTask)="callEditTask($event)"
       (renderTasks)="renderTasks()"
+      (renderGroups)="renderGroups($event)"
+      (callEditGroup)="callEditGroup($event)"
     ></edm-task-list>
 
     <button type="button" class="addTask" (click)="addTask()">+</button>
@@ -28,15 +31,18 @@
   <edm-task-add-edit 
     *ngIf="isShowTask"
     [isTaskEdit]="isTaskEdit"
-    (renderTasks)="renderTasks()"
-    (closePopup)="closePopup()"
     [groupId]="groupId"
     [openTaskId]="openTaskId"
+    (renderTasks)="renderTasks()"
+    (closePopup)="closePopup()"
   ></edm-task-add-edit>
 
   <edm-group-add-edit 
     *ngIf="isShowGroup"
     [isGroupEdit]="isGroupEdit"
+    [groupId]="groupId"
+    (renderGroups)="renderGroups()"
+    (closePopup)="closePopup()"
   ></edm-group-add-edit>
 
   <div class="close" (click)="closePopup()"></div>

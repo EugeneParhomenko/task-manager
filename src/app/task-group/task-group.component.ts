@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter, Input } from '@angular/core';
 import {TaskService } from '../common/service/task.service';
 import { Group } from '../common/model/group.model';
 import { Subscription } from 'rxjs';
@@ -15,15 +15,16 @@ export class TaskGroupComponent implements OnInit, OnDestroy {
   active: number;
 
   @Output() onChanged = new EventEmitter<number>();
+  @Input() groupId: number;
 
   constructor(
     private taskService: TaskService
   ) { }
 
-  public renderGroups(): void {
+  public renderGroups(groupId?: number | 1): void {
       this.s1 = this.taskService.getGroups()
         .subscribe(groups => {
-          this.active = 1;
+          this.active = this.groupId ? this.groupId : groupId;
           this.groups = groups;
         });
   }
@@ -32,7 +33,7 @@ export class TaskGroupComponent implements OnInit, OnDestroy {
     this.renderGroups();
   }
 
-  change(listId: number): void {
+  public change(listId: number): void {
     this.active = listId;
     this.onChanged.emit(listId);
   }
