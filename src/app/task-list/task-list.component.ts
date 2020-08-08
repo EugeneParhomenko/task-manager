@@ -81,9 +81,11 @@ export class TaskListComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public deleteGroup(): void {
-    this.taskService.deleteGroup(this.groupId);
-    this.renderTasks(1);
-    this.renderGroups.emit();
+    this.taskService.deleteGroup(this.groupId)
+      .subscribe(() => {
+        this.renderTasks(1);
+        this.renderGroups.emit(1);
+      });
   }
 
 
