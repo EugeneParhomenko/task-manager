@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
 import { Group } from '../common/model/group.model';
 import { TaskService } from '../common/service/task.service';
+import { untilDestroyed } from 'ngx-take-until-destroy';
 
 @Component({
   selector: 'edm-group-add-edit',
@@ -17,10 +17,8 @@ export class GroupAddEditComponent implements OnInit, OnDestroy {
   form: FormGroup;
   @Input() isGroupEdit: boolean;
   @Input() groupId: number;
-  @Output() renderGroups = new EventEmitter<any>();
+  @Output() renderGroups = new EventEmitter<number>();
   @Output() closePopup = new EventEmitter<any>();
-  s1: Subscription;
-  s2: Subscription;
 
   constructor(
     private taskService: TaskService
@@ -38,39 +36,32 @@ export class GroupAddEditComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    if(this.s1) {
-      this.s1.unsubscribe();
-    }
-    if(this.s2) {
-      this.s2.unsubscribe();
-    }
-  }
+  ngOnDestroy(): void {}
 
   public submit(): void {
     if (this.isGroupEdit) {
       const title = this.form.value.title;
       const group: Group = {title};
 
-      this.s1 = this.taskService.updateGroup(this.group.id, group)
+      this.taskService.updateGroup(this.group.id, group).pipe(untilDestroyed(this))
         .subscribe(() => {
-          this.renderGroups.emit();
+          this.renderGroups.emit(this.groupId);
           this.closePopup.emit();
         });
     } else {
       const title = this.form.value.title;
       const group: Group = {title};
 
-      this.s1 = this.taskService.addGroup(group)
+      this.taskService.addGroup(group).pipe(untilDestroyed(this))
         .subscribe(() => {
-          this.renderGroups.emit();
+          this.renderGroups.emit(this.groupId);
           this.closePopup.emit();
         });
     }
   }
 
   private setEditGroup(id: number): void {
-    this.s2 = this.taskService.getGroup(id)
+    this.taskService.getGroup(id).pipe(untilDestroyed(this))
       .subscribe((group) => {
         this.group = group;
 

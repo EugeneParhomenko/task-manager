@@ -3,7 +3,7 @@
   <div class="task-groups">
 
     <edm-task-group 
-      [groupId]="groupId" 
+      [(groupId)]="groupId" 
       (onChanged)="onChanged($event)"
     ></edm-task-group>
 
@@ -13,7 +13,7 @@
   <div class="task-list">
 
     <edm-task-list 
-      [groupId]="groupId" 
+      [(groupId)]="groupId" 
       (callEditTask)="callEditTask($event)"
       (renderTasks)="renderTasks()"
       (renderGroups)="renderGroups($event)"
@@ -24,6 +24,7 @@
   </div>
 
 </div>
+
 
 <div class="overlay" [ngClass]="{'active': isShowPopup}" (click)="closePopup()"></div>
 <div class="popup" [ngClass]="{'active': isShowPopup}">
@@ -40,8 +41,8 @@
   <edm-group-add-edit 
     *ngIf="isShowGroup"
     [isGroupEdit]="isGroupEdit"
-    [groupId]="groupId"
-    (renderGroups)="renderGroups()"
+    [(groupId)]="groupId"
+    (renderGroups)="renderGroups($event)"
     (closePopup)="closePopup()"
   ></edm-group-add-edit>
 

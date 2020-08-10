@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Input, OnChanges, SimpleChanges, EventEmitter, Output } from '@angular/core';
 import { TaskService } from '../common/service/task.service';
 import { Task } from '../common/model/task.model';
-import { Subscription } from 'rxjs';
+import { untilDestroyed } from 'ngx-take-until-destroy';
 
 @Component({
   selector: 'edm-task-list',
@@ -10,12 +10,8 @@ import { Subscription } from 'rxjs';
 })
 export class TaskListComponent implements OnInit, OnDestroy, OnChanges {
 
-  list: Task[] = [];
-  s1: Subscription;
-  s2: Subscription;
-  s3: Subscription;
-  s4: Subscription;
 
+  list: Task[] = [];
   empty: boolean = false;
 
   @Input() groupId: number;
@@ -23,44 +19,36 @@ export class TaskListComponent implements OnInit, OnDestroy, OnChanges {
   @Output() callEditGroup = new EventEmitter<number>();
   @Output() renderGroups = new EventEmitter<any>();
 
+
   constructor(
     private taskService: TaskService
   ) { }
 
+
+
   ngOnInit(): void {
+    console.log('Init List component');
     this.renderTasks(1);
   }
 
-
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('Change List component');
     if(changes && changes['groupId']) {
       this.renderTasks(this.groupId);
     }
   }
 
-  ngOnDestroy(): void {
-    if(this.s1) {
-      this.s1.unsubscribe();
-    }
-    if(this.s2) {
-      this.s2.unsubscribe();
-    }
-    if(this.s3) {
-      this.s2.unsubscribe();
-    }
-    if(this.s4) {
-      this.s4.unsubscribe();
-    }
-  }
+  ngOnDestroy(): void {}
 
 
 
 
   public renderTasks(parent: number): void {
-    this.s1 = this.taskService.getGroupList(parent)
-      .subscribe((list) => {
-        if(list && list.length > 0) {
-          this.list = list;
+    console.log(`Render TASK, by parent ID = ${parent}`);
+    this.taskService.getGroupList(parent).pipe(untilDestroyed(this))
+      .subscribe((tasks) => {
+        if (tasks && tasks.length > 0) {
+          this.list = tasks;
           this.empty = false;
         } else {
           this.empty = true;
@@ -69,10 +57,11 @@ export class TaskListComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public deleteTask(id: number): void {
-    this.s4 = this.taskService.deleteTask(id)
+    console.log('Delete TASK');
+    this.taskService.deleteTask(id).pipe(untilDestroyed(this))
       .subscribe(() => {
         this.renderTasks(this.groupId ? this.groupId : 1);
-        this.renderGroups.emit(1);
+        // this.renderGroups.emit(this.groupId);
       });
   }
 
@@ -81,28 +70,36 @@ export class TaskListComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public deleteGroup(): void {
-    this.taskService.deleteGroup(this.groupId)
+    console.log('Delete GROUP');
+    this.taskService.deleteGroup(this.groupId).pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.renderTasks(1);
-        this.renderGroups.emit(1);
+        this.taskService.getGroupList(this.groupId).pipe(untilDestroyed(this)).subscribe((tasks) => {
+          if (tasks && tasks.length > 0) {
+            for (let task of tasks) {
+              this.taskService.deleteTask(task.id).pipe(untilDestroyed(this)).subscribe();
+            }
+          }
+          this.renderGroups.emit(1);
+          this.renderTasks(1);
+        });
       });
   }
 
-
-  public toggleTask(id: number): void{
-    this.s2 = this.taskService.getTask(id)
+  public toggleTask(taskId: number): void{
+    console.log('Toggle TASK');
+    this.taskService.getTask(taskId).pipe(untilDestroyed(this))
       .subscribe((task) => {
         task.done = !task.done;
 
-        this.s3 = this.taskService.updateTask(id, task)
+        this.taskService.updateTask(taskId, task).pipe(untilDestroyed(this))
           .subscribe(() => {
             this.renderTasks(this.groupId ? this.groupId : 1);
           });
       });
   }
 
-  public editTask(id: number): void {
-    this.callEditTask.emit(id);
+  public editTask(taskId: number): void {
+    this.callEditTask.emit(taskId);
   }
 
 }

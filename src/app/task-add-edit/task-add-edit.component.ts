@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, OnChanges, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Task } from '../common/model/task.model';
-import { Subscription } from 'rxjs';
+import { untilDestroyed } from 'ngx-take-until-destroy';
 import { TaskService } from '../common/service/task.service';
 
 @Component({
@@ -20,12 +20,14 @@ export class TaskAddEditComponent implements OnInit, OnDestroy {
   @Input() openTaskId: number;
   @Output() renderTasks = new EventEmitter<any>();
   @Output() closePopup = new EventEmitter<any>();
-  s1: Subscription;
-  s2: Subscription;
+
 
   constructor(
     private taskService: TaskService
   ) { }
+
+
+
 
   ngOnInit(): void {
     this.changeText();
@@ -39,6 +41,11 @@ export class TaskAddEditComponent implements OnInit, OnDestroy {
     }
   }
 
+  ngOnDestroy(): void {}
+
+
+
+
   submit(): void {
     if (this.isTaskEdit) {
       const title = this.form.value.title;
@@ -46,7 +53,7 @@ export class TaskAddEditComponent implements OnInit, OnDestroy {
       const done = this.task.done;
       const task: Task = {title, parent, done};
 
-      this.s1 = this.taskService.updateTask(this.task.id, task)
+      this.taskService.updateTask(this.task.id, task).pipe(untilDestroyed(this))
         .subscribe(() => {
           this.renderTasks.emit();
           this.closePopup.emit();
@@ -57,7 +64,7 @@ export class TaskAddEditComponent implements OnInit, OnDestroy {
       const done = false;
       const task: Task = {title, parent, done};
 
-      this.s1 = this.taskService.addTask(task)
+      this.taskService.addTask(task).pipe(untilDestroyed(this))
         .subscribe(() => {
           this.renderTasks.emit();
           this.closePopup.emit();
@@ -65,17 +72,8 @@ export class TaskAddEditComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    if(this.s1) {
-      this.s1.unsubscribe();
-    }
-    if(this.s2) {
-      this.s2.unsubscribe();
-    }
-  }
-
   private setEditTask(id: number): void {
-    this.s2 = this.taskService.getTask(id)
+    this.taskService.getTask(id).pipe(untilDestroyed(this))
       .subscribe((task) => {
         this.task = task;
 

@@ -44,25 +44,23 @@ export class TaskService {
     // }
 
     public deleteGroup(groupId: number): Observable<any> {
-        console.log('starting delete');
-        this.deleteGroupList(groupId);
         return this.http.delete(this.serverUrl + `groups/${groupId}`);
     }
 
-    public deleteGroupList(groupId: number): Observable<any> {
-        console.log('starting delete lists');
-        return this.http.get(this.serverUrl + 'tasks')
-            .pipe(
-                map((item: Task[]) => item.filter(item => {
-                    console.log(item);
-                    if (item) {
-                        if (item.parent === groupId) {
-                            return this.http.delete(this.serverUrl + `tasks/${item.id}`);
-                        }
-                    }
-                }))
-            );
-    }
+    // public deleteGroupList(groupId: number): Observable<any> {
+    //     return this.http.get(this.serverUrl + 'tasks')
+    //         .pipe(
+    //             map((item: Task[]) => item.filter(item => {
+    //                 console.log(item);
+    //                 if (item) {
+    //                     if (item.parent === groupId) {
+    //                         console.log('It most be delete');
+    //                         this.deleteTask(item.id).subscribe().unsubscribe();
+    //                     }
+    //                 }
+    //             }))
+    //         );
+    // }
 
     public getGroupList(groupId: number): Observable<any> {
         return this.http.get(this.serverUrl + 'tasks')
